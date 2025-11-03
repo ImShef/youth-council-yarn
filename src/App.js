@@ -54,82 +54,172 @@ const App = () => {
   const mapInstanceRef = useRef(null);
   const placemarksRef = useRef({});
 
-  // ✅ ВСЕ useCallback ВЫЗЫВАЮТСЯ СРАЗУ ПОСЛЕ ДРУГИХ ХУКОВ
-  const getContrastColor = useCallback((hexcolor) => {
-    const r = parseInt(hexcolor.substr(1, 2), 16);
-    const g = parseInt(hexcolor.substr(3, 2), 16);
-    const b = parseInt(hexcolor.substr(5, 2), 16);
-    const yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000;
-    return (yiq >= 128) ? '#000000' : '#FFFFFF';
+  // ✅ Функция для получения базового URL (работает на GitHub Pages)
+  const getBaseUrl = useCallback(() => {
+    // Для GitHub Pages используем относительные пути
+    return window.location.origin + window.location.pathname;
   }, []);
 
-  const applyTelegramButtonColor = useCallback(() => {
-    const tg = window.Telegram?.WebApp;
-    if (!tg) return;
+  // ✅ Функция для получения ссылки на анкету участника
+  const getMemberProfileUrl = useCallback((memberId) => {
+    const baseUrl = getBaseUrl();
+    return `${baseUrl}?profile=${memberId}`;
+  }, [getBaseUrl]);
 
-    const systemTheme = tg.colorScheme === 'dark' ? 'theme-dark' : 'theme-light';
-    document.body.className = systemTheme;
+  // ✅ Компонент для QR-кода
+  const MemberQRCode = useCallback(({ memberId, size = 200 }) => {
+    const qrValue = getMemberProfileUrl(memberId);
     
-    if (tg.themeParams?.button_color) {
-      const buttonColor = tg.themeParams.button_color;
-      document.documentElement.style.setProperty('--tg-button-color', buttonColor);
-      
-      const buttonTextColor = getContrastColor(buttonColor);
-      document.documentElement.style.setProperty('--tg-button-text-color', buttonTextColor);
+    return (
+      <div className="qr-code-container">
+        <QRCodeSVG 
+          value={qrValue}
+          size={size}
+          level="M"
+          includeMargin={true}
+          bgColor="#ffffff"
+          fgColor="#000000"
+        />
+        <div className="qr-link-info">
+          <small>Ссылка: {qrValue}</small>
+        </div>
+      </div>
+    );
+  }, [getMemberProfileUrl]);
+
+  // ✅ Обработка URL параметров при загрузке
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const profileId = urlParams.get('profile');
+    const isAdmin = urlParams.get('admin') === 'true';
+    
+    console.log('URL Parameters:', { profileId, isAdmin });
+    
+    if (isAdmin) {
+      // Админка обрабатывается в основном рендере
+      return;
     }
     
-    console.log('Telegram button color applied');
-  }, [getContrastColor]);
+    if (profileId && profiles.length > 0) {
+      const member = profiles.find(p => p.id === profileId);
+      if (member) {
+        setState(prev => ({ 
+          ...prev, 
+          selectedMember: member,
+          currentTab: 'member'
+        }));
+      }
+    }
+  }, [profiles]);
 
-  const initTelegram = useCallback(() => {
+  // ✅ Инициализация приложения
+  useEffect(() => {
+    const discounts = loadDiscounts().filter(d => d.isActive);
+    const items = discounts.map(discount => ({
+      location: discount.id,
+      title: discount.title,
+      description: discount.description,
+      discountValue: discount.discountValue,
+      category: discount.category,
+      coordinates: discount.coordinates
+    }));
+    
+    setFeedItems(items);
+
+    const activeProfiles = loadProfiles().filter(profile => profile.isActive);
+    setProfiles(activeProfiles);
+
+    // Инициализация Telegram
     if (window.Telegram && window.Telegram.WebApp) {
       const tg = window.Telegram.WebApp;
-      
-      console.log('Telegram Web App detected');
-      
       setState(prev => ({
         ...prev,
         tg: tg,
         isTelegram: true
       }));
-
       tg.expand();
-      tg.enableClosingConfirmation();
-
-      if (tg.initDataUnsafe.user) {
-        const tgUser = tg.initDataUnsafe.user;
-        
-        const photoUrl = tgUser.photo_url || null;
-        
-        setUserData(prev => ({
-          ...prev,
-          firstName: tgUser.first_name || "Пользователь",
-          lastName: tgUser.last_name || "",
-          username: tgUser.username ? `@${tgUser.username}` : "@username",
-          photoUrl: photoUrl
-        }));
-      }
-
-      applyTelegramButtonColor();
-      
-    } else {
-      console.log('Running in browser, using light theme');
-      setState(prev => ({ ...prev, isTelegram: false }));
-      document.body.className = 'theme-light';
     }
-  }, [applyTelegramButtonColor]);
 
-  const hideSplashScreen = useCallback(() => {
-    setState(prev => ({ ...prev, splashVisible: false }));
+    // Скрытие splash screen
+    setTimeout(() => {
+      setState(prev => ({ ...prev, splashVisible: false }));
+    }, 2000);
   }, []);
 
-  const initApp = useCallback(() => {
-    initTelegram();
-    setTimeout(() => {
-      hideSplashScreen();
-    }, 2000);
-  }, [initTelegram, hideSplashScreen]);
+  // ✅ Инициализация карты
+  useEffect(() => {
+    if (state.currentTab === 'feed' && !state.mapInitialized && window.ymaps) {
+      const initMap = () => {
+        window.ymaps.ready(() => {
+          try {
+            if (mapInstanceRef.current) return;
 
+            mapInstanceRef.current = new window.ymaps.Map("yandex-map", {
+              center: [60.710474, 28.749282],
+              zoom: 14,
+              controls: ['typeSelector', 'fullscreenControl']
+            });
+            
+            // Добавление локаций
+            const discounts = loadDiscounts().filter(d => d.isActive && d.coordinates);
+            const locations = discounts.map(discount => {
+              const [lat, lng] = discount.coordinates.split(',').map(coord => parseFloat(coord.trim()));
+              return {
+                id: discount.id,
+                coords: [lat, lng],
+                name: discount.title,
+                description: `${discount.description}\n\nСкидка: ${discount.discountValue}`
+              };
+            });
+
+            locations.forEach(location => {
+              const placemark = new window.ymaps.Placemark(location.coords, {
+                balloonContent: `
+                  <div style="padding: 10px; color: #000000 !important;">
+                    <h3 style="margin: 0 0 5px; color: #000000 !important; font-weight: bold;">${location.name}</h3>
+                    <p style="margin: 0; color: #000000 !important; white-space: pre-line;">${location.description}</p>
+                  </div>
+                `
+              }, {
+                preset: 'islands#violetIcon'
+              });
+
+              mapInstanceRef.current.geoObjects.add(placemark);
+              placemarksRef.current[location.id] = placemark;
+            });
+
+            if (locations.length === 0) {
+              const mapElement = document.getElementById('yandex-map');
+              if (mapElement) {
+                mapElement.innerHTML = `
+                  <div class="empty-map-message">
+                    <p>Пока нет партнерских заведений</p>
+                    <p>Скидки появятся здесь после добавления в админке</p>
+                  </div>
+                `;
+              }
+            }
+
+            setState(prev => ({ ...prev, mapInitialized: true }));
+          } catch (error) {
+            console.error('Ошибка при инициализации карты:', error);
+          }
+        });
+      };
+
+      setTimeout(initMap, 500);
+    }
+  }, [state.currentTab, state.mapInitialized]);
+
+  // ✅ Проверка на админку ПОСЛЕ ВСЕХ хуков
+  const urlParams = new URLSearchParams(window.location.search);
+  const isAdmin = urlParams.get('admin') === 'true';
+
+  if (isAdmin) {
+    return <Admin />;
+  }
+
+  // ✅ Основные функции
   const toggleTheme = useCallback(() => {
     const newTheme = state.theme === 'light' ? 'dark' : 'light';
     setState(prev => ({ ...prev, theme: newTheme }));
@@ -160,50 +250,6 @@ const App = () => {
     }));
   }, []);
 
-  // ✅ Функция для получения ссылки на анкету участника
-  const getMemberProfileUrl = useCallback((memberId) => {
-    const currentUrl = window.location.origin + window.location.pathname;
-    return `${currentUrl}?profile=${memberId}`;
-  }, []);
-
-  // ✅ Функция для генерации QR-кода участника
-  const MemberQRCode = useCallback(({ memberId, size = 200 }) => {
-    const qrValue = getMemberProfileUrl(memberId);
-    
-    return (
-      <div className="qr-code-container">
-        <QRCodeSVG 
-          value={qrValue}
-          size={size}
-          level="M"
-          includeMargin={true}
-          bgColor="var(--card-bg)"
-          fgColor="var(--text-color)"
-        />
-        <div className="qr-link-info">
-          <small>Ссылка: {qrValue}</small>
-        </div>
-      </div>
-    );
-  }, [getMemberProfileUrl]);
-
-  // ✅ Обработка URL параметров при загрузке
-  useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const profileId = urlParams.get('profile');
-    
-    if (profileId && profiles.length > 0) {
-      const member = profiles.find(p => p.id === profileId);
-      if (member) {
-        setState(prev => ({ 
-          ...prev, 
-          selectedMember: member,
-          currentTab: 'member'
-        }));
-      }
-    }
-  }, [profiles]);
-
   const getUserInitials = useCallback(() => {
     const { firstName, lastName } = userData;
     if (!firstName) return 'ИИ';
@@ -211,140 +257,6 @@ const App = () => {
     return lastName ? firstInitial + lastName.charAt(0).toUpperCase() : firstInitial;
   }, [userData]);
 
-  const showMapError = useCallback(() => {
-    const mapElement = document.getElementById('yandex-map');
-    if (mapElement && !mapElement.querySelector('.map-placeholder')) {
-      mapElement.innerHTML = `
-        <div class="map-placeholder">
-          <p>Не удалось загрузить карту</p>
-          <p>Проверьте подключение к интернету</p>
-        </div>
-      `;
-    }
-  }, []);
-
-  const addMapLocations = useCallback(() => {
-    if (!mapInstanceRef.current) return;
-
-    const discounts = loadDiscounts().filter(d => d.isActive && d.coordinates);
-    
-    const locations = discounts.map(discount => {
-      const [lat, lng] = discount.coordinates.split(',').map(coord => parseFloat(coord.trim()));
-      return {
-        id: discount.id,
-        coords: [lat, lng],
-        name: discount.title,
-        description: `${discount.description}\n\nСкидка: ${discount.discountValue}`
-      };
-    });
-
-    locations.forEach(location => {
-      const placemark = new window.ymaps.Placemark(location.coords, {
-        balloonContent: `
-          <div style="padding: 10px; color: #000000 !important;">
-            <h3 style="margin: 0 0 5px; color: #000000 !important; font-weight: bold;">${location.name}</h3>
-            <p style="margin: 0; color: #000000 !important; white-space: pre-line;">${location.description}</p>
-          </div>
-        `
-      }, {
-        preset: 'islands#violetIcon'
-      });
-
-      mapInstanceRef.current.geoObjects.add(placemark);
-      placemarksRef.current[location.id] = placemark;
-    });
-
-    if (locations.length === 0 && mapInstanceRef.current) {
-      const mapElement = document.getElementById('yandex-map');
-      if (mapElement && !mapElement.querySelector('.empty-map-message')) {
-        mapElement.innerHTML = `
-          <div class="empty-map-message">
-            <Frown size={48} />
-            <p>Пока нет партнерских заведений</p>
-            <p>Скидки появятся здесь после добавления в админке</p>
-          </div>
-        `;
-      }
-    }
-  }, []);
-
-  const initMap = useCallback(() => {
-    if (state.mapInitialized || typeof window.ymaps === 'undefined') {
-      return;
-    }
-
-    window.ymaps.ready(() => {
-      try {
-        if (mapInstanceRef.current) return;
-
-        mapInstanceRef.current = new window.ymaps.Map("yandex-map", {
-          center: [60.710474, 28.749282],
-          zoom: 14,
-          controls: ['typeSelector', 'fullscreenControl']
-        });
-        
-        addMapLocations();
-        setState(prev => ({ ...prev, mapInitialized: true }));
-      } catch (error) {
-        console.error('Ошибка при инициализации карты:', error);
-        showMapError();
-      }
-    });
-  }, [state.mapInitialized, addMapLocations, showMapError]);
-
-  const scrollToMap = useCallback(() => {
-    const mapFeedItem = document.getElementById('map-feed-item');
-    mapFeedItem?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }, []);
-
-  const showOnMap = useCallback((locationId) => {
-    if (!mapInstanceRef.current || !placemarksRef.current[locationId]) return;
-    const placemark = placemarksRef.current[locationId];
-    mapInstanceRef.current.setCenter(placemark.geometry.getCoordinates(), 16);
-    placemark.balloon.open();
-    if (state.currentTab !== 'feed') {
-      switchTab('feed');
-      setTimeout(scrollToMap, 300);
-    } else {
-      scrollToMap();
-    }
-  }, [state.currentTab, switchTab, scrollToMap]);
-
-  // ✅ ВСЕ useEffect ВЫЗЫВАЮТСЯ СРАЗУ ПОСЛЕ useCallback
-  useEffect(() => {
-    const discounts = loadDiscounts().filter(d => d.isActive);
-    const items = discounts.map(discount => ({
-      location: discount.id,
-      title: discount.title,
-      description: discount.description,
-      discountValue: discount.discountValue,
-      category: discount.category,
-      coordinates: discount.coordinates
-    }));
-    
-    setFeedItems(items);
-
-    const activeProfiles = loadProfiles().filter(profile => profile.isActive);
-    setProfiles(activeProfiles);
-
-    initApp();
-  }, [initApp]);
-
-  useEffect(() => {
-    if (state.currentTab === 'feed' && !state.mapInitialized) {
-      setTimeout(initMap, 500);
-    }
-  }, [state.currentTab, state.mapInitialized, initMap]);
-
-  // ✅ Проверка на админку ПОСЛЕ ВСЕХ хуков
-  const urlParams = new URLSearchParams(window.location.search);
-  const isAdmin = urlParams.get('admin') === 'true';
-
-  if (isAdmin) {
-    return <Admin />;
-  }
-
-  // ✅ ОСТАЛЬНАЯ ЛОГИКА КОМПОНЕНТА
   const userInitials = getUserInitials();
   const userName = `${userData.firstName} ${userData.lastName}`;
 
@@ -429,7 +341,7 @@ const App = () => {
                   <h3 className="feed-title">😔 Пока нет скидок</h3>
                   <p className="feed-description">
                     Скидки появятся здесь после добавления в админ-панели.<br />
-                    Зайдите в админку по адресу: <strong>?admin=true</strong>
+                    Зайдите в админку: <strong>{getBaseUrl()}?admin=true</strong>
                   </p>
                 </div>
               </div>
@@ -444,7 +356,7 @@ const App = () => {
                         Скидка: {item.discountValue}
                       </div>
                     )}
-                    <button className="map-button" onClick={() => showOnMap(item.location)}>
+                    <button className="map-button">
                       <MapPin size={16} />
                       На карте
                     </button>
@@ -455,7 +367,7 @@ const App = () => {
           </div>
         </div>
 
-        {/* Вкладка Участники - СПИСОК */}
+        {/* Вкладка Участники */}
         <div className={`tab-content ${state.currentTab === 'profiles' ? 'active' : ''}`}>
           <div className="profiles-page">
             <div className="page-header">
@@ -502,7 +414,7 @@ const App = () => {
           </div>
         </div>
 
-        {/* ✅ Вкладка Детальная анкета участника */}
+        {/* Детальная анкета участника */}
         <div className={`tab-content ${state.currentTab === 'member' ? 'active' : ''}`}>
           {state.selectedMember && (
             <div className="member-detail-page">
@@ -574,7 +486,7 @@ const App = () => {
         </div>
       </main>
 
-      {/* ✅ Футер не показываем на детальной странице участника */}
+      {/* Footer */}
       {state.currentTab !== 'member' && (
         <footer className="footer">
           <div className={`footer-item ${state.currentTab === 'feed' ? 'active' : ''}`} onClick={() => switchTab('feed')}>
