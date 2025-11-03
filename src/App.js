@@ -34,7 +34,7 @@ const App = () => {
     isTelegram: false,
     tg: null,
     mapInitialized: false,
-    theme: 'light',
+    theme: 'light', // Значение по умолчанию
     selectedMember: null
   });
 
@@ -54,10 +54,57 @@ const App = () => {
   const mapInstanceRef = useRef(null);
   const placemarksRef = useRef({});
 
+  // Функция для определения системной темы
+  const getSystemTheme = useCallback(() => {
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      return 'dark';
+    }
+    return 'light';
+  }, []);
+
   // Инициализация темы
   useEffect(() => {
+    // Проверяем сохраненную тему в localStorage
+    const savedTheme = localStorage.getItem('youthCouncilTheme');
+    let initialTheme;
+
+    if (savedTheme) {
+      // Если есть сохраненная тема - используем ее
+      initialTheme = savedTheme;
+    } else {
+      // Иначе определяем системную тему
+      initialTheme = getSystemTheme();
+    }
+
+    setState(prev => ({ ...prev, theme: initialTheme }));
+  }, [getSystemTheme]);
+
+  // Применение темы при изменении
+  useEffect(() => {
     document.body.className = `theme-${state.theme}`;
+    // Сохраняем тему в localStorage
+    localStorage.setItem('youthCouncilTheme', state.theme);
   }, [state.theme]);
+
+  // Слушатель изменения системной темы (опционально)
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    
+    const handleThemeChange = (e) => {
+      // Меняем тему только если пользователь не выбирал тему вручную
+      const savedTheme = localStorage.getItem('youthCouncilTheme');
+      if (!savedTheme) {
+        const newTheme = e.matches ? 'dark' : 'light';
+        setState(prev => ({ ...prev, theme: newTheme }));
+      }
+    };
+
+    mediaQuery.addEventListener('change', handleThemeChange);
+    
+    return () => {
+      mediaQuery.removeEventListener('change', handleThemeChange);
+    };
+  }, []);
 
   // Получение базового URL
   const getBaseUrl = useCallback(() => {

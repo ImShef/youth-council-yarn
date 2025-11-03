@@ -4,6 +4,48 @@
   box-sizing: border-box;
   font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
 }
+/* Автоматическое определение системной темы */
+@media (prefers-color-scheme: dark) {
+  body:not(.theme-light):not(.theme-dark) {
+    --bg-color: #121212;
+    --secondary-bg: #1e1e1e;
+    --text-color: #ffffff;
+    --secondary-text: #a0a0a0;
+    --accent-color: var(--tg-button-color, #8b5cf6);
+    --accent-text: var(--tg-button-text-color, #ffffff);
+    --accent-light: color-mix(in srgb, var(--accent-color) 20%, transparent);
+    --accent-dark: color-mix(in srgb, var(--accent-color) 60%, white);
+    --border-color: #333333;
+    --card-bg: #1e1e1e;
+    --shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    --hover-color: color-mix(in srgb, var(--accent-color) 15%, transparent);
+    --section-bg: #2d2d2d;
+    --header-bg: var(--accent-color);
+    background-color: var(--bg-color);
+    color: var(--text-color);
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  body:not(.theme-light):not(.theme-dark) {
+    --bg-color: #fafafa;
+    --secondary-bg: #f0f0f0;
+    --text-color: #2d2d2d;
+    --secondary-text: #6c6c6c;
+    --accent-color: var(--tg-button-color, #8b5cf6);
+    --accent-text: var(--tg-button-text-color, #ffffff);
+    --accent-light: color-mix(in srgb, var(--accent-color) 10%, transparent);
+    --accent-dark: color-mix(in srgb, var(--accent-color) 80%, black);
+    --border-color: #e5e5e5;
+    --card-bg: #ffffff;
+    --shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    --hover-color: #f5f3ff;
+    --section-bg: #ffffff;
+    --header-bg: var(--accent-color);
+    background-color: var(--bg-color);
+    color: var(--text-color);
+  }
+}
 
 /* ===== CSS ПЕРЕМЕННЫЕ И БАЗОВЫЕ СТИЛИ ===== */
 :root {
