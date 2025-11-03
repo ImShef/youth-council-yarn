@@ -37,7 +37,7 @@ const App = () => {
     tg: null,
     mapInitialized: false,
     theme: 'light',
-    selectedMember: null // ✅ Добавили состояние для выбранного участника
+    selectedMember: null
   });
 
   const [userData, setUserData] = useState({
@@ -140,7 +140,7 @@ const App = () => {
     setState(prev => ({ 
       ...prev, 
       currentTab: tabId,
-      selectedMember: null // Сбрасываем выбранного участника при смене вкладки
+      selectedMember: null
     }));
   }, []);
 
@@ -148,7 +148,7 @@ const App = () => {
     setState(prev => ({ 
       ...prev, 
       selectedMember: member,
-      currentTab: 'member' // Переключаем на вкладку детального просмотра
+      currentTab: 'member'
     }));
   }, []);
 
@@ -156,15 +156,36 @@ const App = () => {
     setState(prev => ({ 
       ...prev, 
       selectedMember: null,
-      currentTab: 'profiles' // Возвращаемся к списку участников
+      currentTab: 'profiles'
     }));
   }, []);
 
   // ✅ Функция для получения ссылки на анкету участника
   const getMemberProfileUrl = useCallback((memberId) => {
-    const currentUrl = window.location.href.split('?')[0]; // Берем базовый URL без параметров
+    const currentUrl = window.location.origin + window.location.pathname;
     return `${currentUrl}?profile=${memberId}`;
   }, []);
+
+  // ✅ Функция для генерации QR-кода участника
+  const MemberQRCode = useCallback(({ memberId, size = 200 }) => {
+    const qrValue = getMemberProfileUrl(memberId);
+    
+    return (
+      <div className="qr-code-container">
+        <QRCodeSVG 
+          value={qrValue}
+          size={size}
+          level="M"
+          includeMargin={true}
+          bgColor="var(--card-bg)"
+          fgColor="var(--text-color)"
+        />
+        <div className="qr-link-info">
+          <small>Ссылка: {qrValue}</small>
+        </div>
+      </div>
+    );
+  }, [getMemberProfileUrl]);
 
   // ✅ Обработка URL параметров при загрузке
   useEffect(() => {
@@ -207,7 +228,6 @@ const App = () => {
 
     const discounts = loadDiscounts().filter(d => d.isActive && d.coordinates);
     
-    // ✅ УБРАЛИ ДЕМО-ЛОКАЦИИ - теперь карта будет пустой если нет скидок
     const locations = discounts.map(discount => {
       const [lat, lng] = discount.coordinates.split(',').map(coord => parseFloat(coord.trim()));
       return {
@@ -234,7 +254,6 @@ const App = () => {
       placemarksRef.current[location.id] = placemark;
     });
 
-    // ✅ Если нет локаций, показываем сообщение на карте
     if (locations.length === 0 && mapInstanceRef.current) {
       const mapElement = document.getElementById('yandex-map');
       if (mapElement && !mapElement.querySelector('.empty-map-message')) {
@@ -303,10 +322,8 @@ const App = () => {
       coordinates: discount.coordinates
     }));
     
-    // ✅ УБРАЛИ ДЕМО-СКИДКИ - теперь feedItems будет пустым если нет скидок
     setFeedItems(items);
 
-    // ✅ Загружаем анкеты участников
     const activeProfiles = loadProfiles().filter(profile => profile.isActive);
     setProfiles(activeProfiles);
 
@@ -323,12 +340,11 @@ const App = () => {
   const urlParams = new URLSearchParams(window.location.search);
   const isAdmin = urlParams.get('admin') === 'true';
 
-  // Если админка, возвращаем компонент Admin
   if (isAdmin) {
     return <Admin />;
   }
 
-  // ✅ ОСТАЛЬНАЯ ЛОГИКА КОМПОНЕНТА ПОСЛЕ УСЛОВНОГО RETURN
+  // ✅ ОСТАЛЬНАЯ ЛОГИКА КОМПОНЕНТА
   const userInitials = getUserInitials();
   const userName = `${userData.firstName} ${userData.lastName}`;
 
@@ -352,7 +368,6 @@ const App = () => {
       <header className="header">
         <div className="header-content">
           {state.currentTab === 'member' ? (
-            // ✅ Шапка для детальной страницы участника
             <>
               <button className="back-button" onClick={goBack}>
                 <ArrowLeft size={24} />
@@ -367,7 +382,6 @@ const App = () => {
               </div>
             </>
           ) : (
-            // ✅ Обычная шапка
             <>
               <div className="logo">
                 <Home size={24} />
@@ -406,7 +420,6 @@ const App = () => {
               </div>
             </div>
 
-            {/* ✅ СООБЩЕНИЕ ЕСЛИ НЕТ СКИДОК */}
             {feedItems.length === 0 ? (
               <div className="feed-item empty-state">
                 <div className="feed-content">
@@ -416,12 +429,11 @@ const App = () => {
                   <h3 className="feed-title">😔 Пока нет скидок</h3>
                   <p className="feed-description">
                     Скидки появятся здесь после добавления в админ-панели.<br />
-                    Зайдите в админку по адресу: <strong>/admin</strong>
+                    Зайдите в админку по адресу: <strong>?admin=true</strong>
                   </p>
                 </div>
               </div>
             ) : (
-              // ✅ СКИДКИ ЕСЛИ ОНИ ЕСТЬ
               feedItems.map((item, index) => (
                 <div key={index} className="feed-item">
                   <div className="feed-content">
@@ -524,22 +536,11 @@ const App = () => {
                   )}
 
                   <div className="member-detail-qr">
-                    <div className="qr-code-container">
-                      <QRCodeSVG 
-                        value={getMemberProfileUrl(state.selectedMember.id)}
-                        size={240}
-                        level="M"
-                        includeMargin={true}
-                        bgColor="var(--card-bg)"
-                        fgColor="var(--text-color)"
-                      />
-                    </div>
+                    <h3 className="qr-title">QR-код анкеты</h3>
+                    <MemberQRCode memberId={state.selectedMember.id} size={240} />
                     <p className="qr-description">
                       Отсканируйте QR-код для просмотра этой анкеты
                     </p>
-                    <div className="qr-link-info">
-                      <small>Ссылка: {getMemberProfileUrl(state.selectedMember.id)}</small>
-                    </div>
                   </div>
                 </div>
               </div>
@@ -560,14 +561,15 @@ const App = () => {
             <div className="profile-name">{userName}</div>
             <div className="profile-status">{userData.status}</div>
             
-            <div className="qr-code">
+            <div className="profile-qr-section">
+              <h3 className="qr-title">Ваш QR-код</h3>
               <div className="qr-code-placeholder">
                 <div className="qr-pattern"></div>
               </div>
+              <p className="qr-description">
+                Покажите этот QR-код для показа вашей анкеты
+              </p>
             </div>
-            <p className="qr-description">
-              Покажите этот QR-код для показа анкеты участника совета молодежи
-            </p>
           </div>
         </div>
       </main>
