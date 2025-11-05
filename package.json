@@ -1,23 +1,31 @@
 {
-  "name": "youth-council-yarn",
-  "version": "0.1.0",
-  "homepage": ".",
-  "dependencies": {
-    "firebase": "^12.5.0",
-    "qrcode.react": "^3.1.0",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-feather": "^2.0.10",
-    "react-router-dom": "^7.9.5",
-    "react-scripts": "5.0.1"
-  },
+  "name": "youth-council-app",
+  "version": "1.0.0",
+  "type": "module",
+  "proxy": "http://localhost:5000",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d build"
+    "server": "node server.js",
+    "dev": "concurrently \"yarn run server\" \"yarn start\""
+  },
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "qrcode.react": "^3.1.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-feather": "^2.0.10",
+    "react-router-dom": "^7.9.5",
+    "react-scripts": "5.0.1",
+    "sqlite3": "^5.1.6"
+  },
+  "devDependencies": {
+    "concurrently": "^7.6.0",
+    "nodemon": "^2.0.20"
   },
   "browserslist": {
     "production": [
@@ -30,8 +38,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "devDependencies": {
-    "gh-pages": "^6.3.0"
   }
 }

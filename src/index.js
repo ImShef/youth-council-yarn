@@ -1,13 +1,21 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { BrowserRouter } from 'react-router-dom';
-import App from './App';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import './styles/App.css';
+import './styles/Admin.css';
+import ApiManager from './utils/apiManager.js';
+import ClientApp from './pages/ClientApp.js';
+import Admin from './pages/Admin.js';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
+    <Router>
+      <Routes>
+        <Route path="/" element={<ClientApp />} />
+        <Route path="/admin" element={<Admin />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </Router>
   </React.StrictMode>
 );

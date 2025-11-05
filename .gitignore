@@ -23,5 +23,5 @@ yarn-debug.log*
 yarn-error.log*
 
 # Конфигурационные файлы с чувствительными данными
-# src/components/config/auth.js
-# src/components/config/auth.*.js
+src/config/auth.js
+src/config/auth.*.js

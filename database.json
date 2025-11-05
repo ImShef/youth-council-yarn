@@ -1,0 +1,44 @@
+{
+  "discounts": [
+    {
+      "id": "1",
+      "title": "Скидка в кофейне \"Кофе Хаус\"",
+      "description": "Скидка 15% на все напитки при предъявлении студенческого билета. Действует с понедельника по пятницу с 9:00 до 18:00.",
+      "coordinates": "60.711503, 28.748026",
+      "category": "food",
+      "discountValue": "15%",
+      "isActive": true,
+      "createdAt": "2025-11-05T00:18:40.473Z",
+      "updatedAt": "2025-11-05T00:18:40.474Z"
+    },
+    {
+      "id": "mhl93ju6bcmdvv84d",
+      "title": "Гоша",
+      "description": "Гоша",
+      "coordinates": "60.711370, 28.747489",
+      "category": "food",
+      "discountValue": "100%",
+      "isActive": true,
+      "createdAt": "2025-11-05T00:19:41.742Z",
+      "updatedAt": "2025-11-05T00:19:41.743Z"
+    }
+  ],
+  "profiles": [
+    {
+      "id": "1",
+      "name": "Иванов Алексей Петрович",
+      "telegram": "alex_ivanov",
+      "phone": "+7 (912) 345-67-89",
+      "photo": null,
+      "position": "Председатель совета молодежи",
+      "isActive": true,
+      "createdAt": "2025-11-05T00:18:40.474Z",
+      "updatedAt": "2025-11-05T00:18:40.474Z"
+    }
+  ],
+  "settings": {
+    "initialized": true,
+    "version": "1.0.0",
+    "createdAt": "2025-11-05T00:18:40.474Z"
+  }
+}

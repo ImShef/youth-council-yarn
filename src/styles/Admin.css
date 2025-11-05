@@ -1,0 +1,1092 @@
+/* ===== ИСПРАВЛЕННЫЕ СТИЛИ АДМИН-ПАНЕЛИ ===== */
+
+/* Базовые CSS переменные для светлой темы */
+.admin-panel.theme-light {
+  --admin-bg-primary: #f5f5f5;
+  --admin-bg-secondary: #ffffff;
+  --admin-bg-tertiary: #f8f9fa;
+  --admin-text-primary: #333333;
+  --admin-text-secondary: #666666;
+  --admin-text-muted: #999999;
+  --admin-border-color: #e0e0e0;
+  --admin-primary-color: #8b5cf6;
+  --admin-primary-hover: #7c3aed;
+  --admin-secondary-color: #6b7280;
+  --admin-success-color: #10b981;
+  --admin-success-hover: #059669;
+  --admin-warning-color: #f59e0b;
+  --admin-warning-hover: #d97706;
+  --admin-danger-color: #ef4444;
+  --admin-danger-hover: #dc2626;
+  --admin-hover-color: rgba(0, 0, 0, 0.05);
+}
+
+/* Темная тема */
+.admin-panel.theme-dark {
+  --admin-bg-primary: #121212;
+  --admin-bg-secondary: #1e1e1e;
+  --admin-bg-tertiary: #2d2d2d;
+  --admin-text-primary: #ffffff;
+  --admin-text-secondary: #cccccc;
+  --admin-text-muted: #888888;
+  --admin-border-color: #444444;
+  --admin-primary-color: #8b5cf6;
+  --admin-primary-hover: #a78bfa;
+  --admin-secondary-color: #9ca3af;
+  --admin-success-color: #10b981;
+  --admin-success-hover: #34d399;
+  --admin-warning-color: #f59e0b;
+  --admin-warning-hover: #fbbf24;
+  --admin-danger-color: #ef4444;
+  --admin-danger-hover: #f87171;
+  --admin-hover-color: rgba(255, 255, 255, 0.05);
+}
+
+/* Базовые стили админ-панели */
+.admin-panel {
+  height: 100vh;
+  background-color: var(--admin-bg-primary);
+  color: var(--admin-text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Сброс стилей */
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+/* Страница входа */
+.admin-panel .admin-login {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  background: linear-gradient(135deg, var(--admin-primary-color) 0%, var(--admin-primary-hover) 100%);
+  padding: 1rem;
+}
+
+.admin-panel .login-container {
+  background: var(--admin-bg-secondary);
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px;
+  margin: 1rem;
+  color: var(--admin-text-primary);
+}
+
+.admin-panel .login-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.admin-panel .login-header h1 {
+  margin: 0 0 0.5rem 0;
+  color: var(--admin-text-primary);
+  font-size: 1.5rem;
+}
+
+.admin-panel .login-header p {
+  margin: 0;
+  color: var(--admin-text-secondary);
+  font-size: 0.9rem;
+}
+
+.admin-panel .login-form .form-group {
+  margin-bottom: 1rem;
+}
+
+.admin-panel .login-form label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: var(--admin-text-primary);
+}
+
+.admin-panel .login-form input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid var(--admin-border-color);
+  border-radius: 5px;
+  font-size: 1rem;
+  box-sizing: border-box;
+  background-color: var(--admin-bg-secondary);
+  color: var(--admin-text-primary);
+}
+
+.admin-panel .login-form input:focus {
+  outline: none;
+  border-color: var(--admin-primary-color);
+}
+
+.admin-panel .login-error {
+  background-color: rgba(220, 53, 69, 0.1);
+  color: var(--admin-danger-color);
+  padding: 0.75rem;
+  border-radius: 5px;
+  margin-bottom: 1rem;
+  border: 1px solid rgba(220, 53, 69, 0.2);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Основной интерфейс админки */
+.admin-panel .admin-header {
+  background: var(--admin-bg-secondary);
+  border-bottom: 1px solid var(--admin-border-color);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  flex-shrink: 0;
+}
+
+.admin-panel .admin-header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.admin-panel .admin-title h1 {
+  margin: 0 0 0.25rem 0;
+  color: var(--admin-text-primary);
+  font-size: 1.25rem;
+}
+
+.admin-panel .admin-title p {
+  margin: 0;
+  color: var(--admin-text-secondary);
+  font-size: 0.8rem;
+}
+
+.admin-panel .loading-indicator {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--admin-primary-color);
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+}
+
+.admin-panel .admin-controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.admin-panel .admin-stats {
+  display: flex;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+  color: var(--admin-text-secondary);
+  flex-wrap: wrap;
+}
+
+/* Кнопки админки */
+.admin-panel .btn-primary,
+.admin-panel .btn-secondary,
+.admin-panel .btn-danger {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  white-space: nowrap;
+  min-height: 44px;
+  box-sizing: border-box;
+}
+
+.admin-panel .btn-primary {
+  background: var(--admin-primary-color);
+  color: white;
+}
+
+.admin-panel .btn-primary:hover:not(:disabled) {
+  background: var(--admin-primary-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.admin-panel .btn-secondary {
+  background: var(--admin-bg-tertiary);
+  color: var(--admin-text-primary);
+  border: 1px solid var(--admin-border-color);
+}
+
+.admin-panel .btn-secondary:hover:not(:disabled) {
+  background: var(--admin-hover-color);
+  transform: translateY(-1px);
+}
+
+.admin-panel .btn-danger {
+  background: var(--admin-danger-color);
+  color: white;
+}
+
+.admin-panel .btn-danger:hover:not(:disabled) {
+  background: var(--admin-danger-hover);
+  transform: translateY(-1px);
+}
+
+.admin-panel .btn-primary:disabled,
+.admin-panel .btn-secondary:disabled,
+.admin-panel .btn-danger:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Кнопка переключения темы */
+.admin-panel .theme-toggle-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: var(--admin-bg-tertiary);
+  color: var(--admin-text-primary);
+  border: 1px solid var(--admin-border-color);
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.9rem;
+  white-space: nowrap;
+  min-height: 44px;
+  box-sizing: border-box;
+}
+
+.admin-panel .theme-toggle-btn:hover {
+  background: var(--admin-primary-color);
+  color: white;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.admin-panel .theme-toggle-text {
+  font-size: 0.8rem;
+}
+
+.admin-panel .logout-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: var(--admin-danger-color);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  font-size: 0.9rem;
+  white-space: nowrap;
+  min-height: 44px;
+  box-sizing: border-box;
+}
+
+.admin-panel .logout-btn:hover {
+  background: var(--admin-danger-hover);
+}
+
+/* Навигация */
+.admin-panel .admin-nav {
+  display: flex;
+  padding: 0 1rem;
+  background: var(--admin-bg-tertiary);
+  border-top: 1px solid var(--admin-border-color);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  flex-shrink: 0;
+}
+
+.admin-panel .nav-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem;
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  cursor: pointer;
+  color: var(--admin-text-secondary);
+  transition: all 0.2s;
+  white-space: nowrap;
+  flex-shrink: 0;
+  min-height: 44px;
+  box-sizing: border-box;
+}
+
+.admin-panel .nav-btn:hover {
+  color: var(--admin-text-primary);
+  background: var(--admin-hover-color);
+}
+
+.admin-panel .nav-btn.active {
+  color: var(--admin-primary-color);
+  border-bottom-color: var(--admin-primary-color);
+  background: var(--admin-hover-color);
+}
+
+/* Основной контейнер */
+.admin-panel .admin-container {
+  flex: 1;
+  padding: 1rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  overflow-y: auto;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Секции */
+.admin-panel .form-section,
+.admin-panel .discounts-section,
+.admin-panel .profiles-section {
+  background: var(--admin-bg-secondary);
+  padding: 1.5rem;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  margin-bottom: 1.5rem;
+  overflow: hidden;
+  border: 1px solid var(--admin-border-color);
+  box-sizing: border-box;
+}
+
+.admin-panel .form-section h2,
+.admin-panel .discounts-section h2,
+.admin-panel .profiles-section h2 {
+  margin: 0 0 1.5rem 0;
+  color: var(--admin-text-primary);
+  font-size: 1.3rem;
+}
+
+/* Формы */
+.admin-panel .form-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+.admin-panel .form-group {
+  margin-bottom: 1rem;
+}
+
+.admin-panel .form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: var(--admin-text-primary);
+}
+
+.admin-panel .form-group input,
+.admin-panel .form-group select,
+.admin-panel .form-group textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid var(--admin-border-color);
+  border-radius: 5px;
+  font-size: 1rem;
+  font-family: inherit;
+  box-sizing: border-box;
+  background-color: var(--admin-bg-secondary);
+  color: var(--admin-text-primary);
+  transition: border-color 0.3s ease;
+  min-height: 44px;
+}
+
+.admin-panel .form-group input:focus,
+.admin-panel .form-group select:focus,
+.admin-panel .form-group textarea:focus {
+  outline: none;
+  border-color: var(--admin-primary-color);
+}
+
+.admin-panel .form-group textarea {
+  resize: vertical;
+  min-height: 80px;
+  max-height: 200px;
+}
+
+.admin-panel .form-group small {
+  display: block;
+  margin-top: 0.25rem;
+  color: var(--admin-text-secondary);
+  font-size: 0.8rem;
+}
+
+.admin-panel .form-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  flex-wrap: wrap;
+}
+
+/* Загрузка фото */
+.admin-panel .photo-upload-section {
+  margin-top: 0.5rem;
+}
+
+.admin-panel .photo-preview {
+  text-align: center;
+}
+
+.admin-panel .photo-preview img {
+  max-width: 100%;
+  max-height: 200px;
+  border-radius: 10px;
+  margin-bottom: 1rem;
+  border: 1px solid var(--admin-border-color);
+}
+
+.admin-panel .remove-photo-btn {
+  background: var(--admin-danger-color);
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.3s ease;
+  min-height: 44px;
+  box-sizing: border-box;
+}
+
+.admin-panel .remove-photo-btn:hover {
+  background: var(--admin-danger-hover);
+}
+
+.admin-panel .photo-upload-placeholder {
+  border: 2px dashed var(--admin-border-color);
+  border-radius: 10px;
+  padding: 2rem;
+  text-align: center;
+  transition: border-color 0.2s;
+  background-color: var(--admin-bg-tertiary);
+  box-sizing: border-box;
+}
+
+.admin-panel .photo-upload-placeholder:hover {
+  border-color: var(--admin-primary-color);
+}
+
+.admin-panel .photo-upload-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  color: var(--admin-text-secondary);
+}
+
+.admin-panel .photo-input {
+  display: none;
+}
+
+/* Заголовки секций */
+.admin-panel .section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.admin-panel .section-header h2 {
+  margin: 0;
+  color: var(--admin-text-primary);
+  font-size: 1.3rem;
+}
+
+.admin-panel .section-stats {
+  color: var(--admin-text-secondary);
+  font-size: 0.9rem;
+  text-align: right;
+}
+
+/* Состояние загрузки */
+.admin-panel .loading-state {
+  text-align: center;
+  padding: 3rem;
+  color: var(--admin-text-secondary);
+}
+
+.admin-panel .loading-state .spinner {
+  animation: adminSpin 1.5s linear infinite;
+}
+
+/* Пустые состояния */
+.admin-panel .empty-state {
+  text-align: center;
+  padding: 3rem;
+  color: var(--admin-text-secondary);
+}
+
+.admin-panel .empty-state svg {
+  margin-bottom: 1rem;
+  opacity: 0.7;
+  color: var(--admin-primary-color);
+}
+
+/* Сетки */
+.admin-panel .discounts-grid,
+.admin-panel .profiles-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  max-height: 600px;
+  overflow-y: auto;
+  padding: 0.5rem;
+}
+
+/* Карточки */
+.admin-panel .discount-card,
+.admin-panel .profile-card {
+  background: var(--admin-bg-secondary);
+  border: 1px solid var(--admin-border-color);
+  border-radius: 10px;
+  overflow: hidden;
+  transition: transform 0.2s, box-shadow 0.2s;
+  color: var(--admin-text-primary);
+  box-sizing: border-box;
+}
+
+.admin-panel .discount-card:hover,
+.admin-panel .profile-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.admin-panel .discount-card.inactive,
+.admin-panel .profile-card.inactive {
+  opacity: 0.6;
+}
+
+.admin-panel .discount-header,
+.admin-panel .profile-header {
+  padding: 1.25rem;
+  border-bottom: 1px solid var(--admin-border-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.admin-panel .discount-title h3,
+.admin-panel .profile-title h3 {
+  margin: 0 0 0.5rem 0;
+  color: var(--admin-text-primary);
+  font-size: 1.1rem;
+}
+
+.admin-panel .category-badge {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  background: var(--admin-primary-color);
+  color: white;
+  border-radius: 15px;
+  font-size: 0.8rem;
+}
+
+/* Контакты в профилях */
+.admin-panel .profile-contacts {
+  margin-top: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.admin-panel .contact-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--admin-text-secondary);
+}
+
+.admin-panel .telegram-link {
+  color: var(--admin-primary-color);
+}
+
+.admin-panel .phone-link {
+  color: var(--admin-success-color);
+}
+
+/* Действия карточек */
+.admin-panel .discount-actions,
+.admin-panel .profile-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.admin-panel .icon-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  flex-shrink: 0;
+  box-sizing: border-box;
+}
+
+.admin-panel .edit-btn {
+  background: var(--admin-warning-color);
+  color: white;
+}
+
+.admin-panel .edit-btn:hover {
+  background: var(--admin-warning-hover);
+}
+
+.admin-panel .delete-btn {
+  background: var(--admin-danger-color);
+  color: white;
+}
+
+.admin-panel .delete-btn:hover {
+  background: var(--admin-danger-hover);
+}
+
+/* Тело карточки */
+.admin-panel .discount-body {
+  padding: 1.25rem;
+}
+
+.admin-panel .discount-description {
+  margin: 0 0 1rem 0;
+  color: var(--admin-text-secondary);
+  line-height: 1.5;
+  word-wrap: break-word;
+}
+
+.admin-panel .discount-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.admin-panel .detail-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.admin-panel .discount-value {
+  font-weight: bold;
+  color: var(--admin-success-color);
+}
+
+.admin-panel .coordinates {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  color: var(--admin-text-secondary);
+}
+
+/* Аватар профиля */
+.admin-panel .profile-info-container {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+.admin-panel .profile-avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+  border: 2px solid var(--admin-border-color);
+}
+
+.admin-panel .profile-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.admin-panel .avatar-placeholder {
+  width: 100%;
+  height: 100%;
+  background: var(--admin-primary-color);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+/* Футер карточки */
+.admin-panel .discount-footer,
+.admin-panel .profile-footer {
+  padding: 1rem 1.25rem;
+  background: var(--admin-bg-tertiary);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid var(--admin-border-color);
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+/* Переключатель статуса */
+.admin-panel .status-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.admin-panel .toggle-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+}
+
+.admin-panel .toggle-label input {
+  display: none;
+}
+
+.admin-panel .toggle-slider {
+  width: 40px;
+  height: 20px;
+  background: var(--admin-secondary-color);
+  border-radius: 20px;
+  position: relative;
+  transition: background-color 0.2s;
+}
+
+.admin-panel .toggle-slider::before {
+  content: '';
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  background: white;
+  border-radius: 50%;
+  top: 2px;
+  left: 2px;
+  transition: transform 0.2s;
+}
+
+.admin-panel .toggle-label input:checked + .toggle-slider {
+  background: var(--admin-success-color);
+}
+
+.admin-panel .toggle-label input:checked + .toggle-slider::before {
+  transform: translateX(20px);
+}
+
+.admin-panel .toggle-text {
+  font-size: 0.9rem;
+  color: var(--admin-text-secondary);
+}
+
+.admin-panel .discount-date,
+.admin-panel .profile-date {
+  font-size: 0.8rem;
+  color: var(--admin-text-muted);
+}
+
+/* Статус соединения */
+.connection-status {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 12px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+
+.connection-info {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.auto-refresh-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.auto-refresh-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--admin-text-secondary);
+  transition: all 0.2s;
+}
+
+.auto-refresh-btn.active {
+  color: var(--admin-success-color);
+}
+
+.auto-refresh-btn:hover {
+  background: var(--admin-hover-color);
+  transform: scale(1.1);
+}
+
+.refresh-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--admin-text-secondary);
+  transition: all 0.2s;
+}
+
+.refresh-btn:hover:not(:disabled) {
+  background: var(--admin-hover-color);
+  transform: scale(1.1);
+}
+
+.refresh-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.last-update-time {
+  font-size: 11px;
+  color: var(--admin-text-muted);
+  cursor: help;
+}
+
+/* Бейдж автообновления */
+.auto-refresh-badge {
+  background: var(--admin-success-color);
+  color: white;
+  padding: 2px 6px;
+  border-radius: 12px;
+  font-size: 10px;
+  margin-left: 8px;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* Уведомления */
+.notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+  padding: 16px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  max-width: 400px;
+  animation: slideIn 0.3s ease-out;
+}
+
+.notification.success {
+  background: var(--admin-success-color);
+  color: white;
+}
+
+.notification.error {
+  background: var(--admin-danger-color);
+  color: white;
+}
+
+.notification-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.notification-close {
+  background: none;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  padding: 4px;
+  margin-left: auto;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Анимации */
+@keyframes adminSpin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Скроллбар */
+.admin-panel .admin-container::-webkit-scrollbar,
+.admin-panel .discounts-grid::-webkit-scrollbar,
+.admin-panel .profiles-grid::-webkit-scrollbar {
+  width: 8px;
+}
+
+.admin-panel .admin-container::-webkit-scrollbar-track,
+.admin-panel .discounts-grid::-webkit-scrollbar-track,
+.admin-panel .profiles-grid::-webkit-scrollbar-track {
+  background: var(--admin-bg-tertiary);
+  border-radius: 4px;
+}
+
+.admin-panel .admin-container::-webkit-scrollbar-thumb,
+.admin-panel .discounts-grid::-webkit-scrollbar-thumb,
+.admin-panel .profiles-grid::-webkit-scrollbar-thumb {
+  background: var(--admin-secondary-color);
+  border-radius: 4px;
+}
+
+.admin-panel .admin-container::-webkit-scrollbar-thumb:hover,
+.admin-panel .discounts-grid::-webkit-scrollbar-thumb:hover,
+.admin-panel .profiles-grid::-webkit-scrollbar-thumb:hover {
+  background: var(--admin-primary-color);
+}
+
+/* Адаптивность */
+@media (min-width: 768px) {
+  .admin-panel .admin-header-content {
+    padding: 1rem 2rem;
+  }
+  
+  .admin-panel .admin-title h1 {
+    font-size: 1.5rem;
+  }
+  
+  .admin-panel .admin-nav {
+    padding: 0 2rem;
+  }
+  
+  .admin-panel .admin-container {
+    padding: 2rem;
+  }
+  
+  .admin-panel .form-section {
+    padding: 2rem;
+  }
+  
+  .admin-panel .form-row {
+    grid-template-columns: 1fr 1fr;
+  }
+  
+  .admin-panel .discounts-grid,
+  .admin-panel .profiles-grid {
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-panel .admin-header-content {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .admin-panel .admin-controls {
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  .admin-panel .form-actions {
+    flex-direction: column;
+  }
+  
+  .admin-panel .btn-primary,
+  .admin-panel .btn-secondary,
+  .admin-panel .btn-danger {
+    min-width: 100%;
+  }
+  
+  .admin-panel .discount-footer,
+  .admin-panel .profile-footer {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .admin-panel .stats-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .admin-panel .theme-toggle-btn .theme-toggle-text {
+    display: none;
+  }
+  
+  .admin-panel .theme-toggle-btn {
+    padding: 0.5rem;
+  }
+  
+  .admin-panel .discount-actions,
+  .admin-panel .profile-actions {
+    justify-content: center;
+    width: 100%;
+  }
+  
+  .admin-panel .discount-header,
+  .admin-panel .profile-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+/* Дополнительные улучшения для предотвращения наложения */
+.admin-panel .admin-controls > * {
+  margin: 2px;
+}
+
+.admin-panel .form-actions > * {
+  margin: 2px;
+}
+
+.admin-panel .discount-actions > *,
+.admin-panel .profile-actions > * {
+  margin: 2px;
+}
