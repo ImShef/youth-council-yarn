@@ -7,6 +7,14 @@ import ApiManager from './utils/apiManager.js';
 import ClientApp from './pages/ClientApp.js';
 import Admin from './pages/Admin.js';
 
+if (sessionStorage.redirect) {
+  const redirect = sessionStorage.redirect;
+  delete sessionStorage.redirect;
+  if (redirect !== location.pathname) {
+    history.replaceState(null, null, redirect);
+  }
+}
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
