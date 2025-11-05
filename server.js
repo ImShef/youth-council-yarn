@@ -8,8 +8,16 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+const HOST = '0.0.0.0'; // Слушаем все интерфейсы
+// Разрешаем CORS для разработки
+app.use(cors({
+  origin: ['http://localhost:3000', 'http://127.0.0.1:3000'],
+  credentials: true
+}));
 
-// Mock data
+app.use(express.json());
+
+// Ваши данные (оставляем как есть)
 const discounts = [
   {
     id: 1,
@@ -71,11 +79,17 @@ app.get('/api/health', (req, res) => {
     status: 'OK', 
     timestamp: new Date().toISOString(),
     discounts: discounts.length,
-    profiles: profiles.length
+    profiles: profiles.length,
+    serverInfo: {
+      internalIP: '192.168.0.62',
+      externalIP: '176.125.135.115',
+      port: PORT
+    }
   });
 });
 
 // === API ROUTES ===
+// (Все ваши роуты остаются без изменений)
 
 // Discounts
 app.get('/api/discounts', (req, res) => {
@@ -233,8 +247,11 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'build', 'index.html'));
 });
 
-app.listen(PORT, () => {
-  console.log(`✅ Server is running on port ${PORT}`);
-  console.log(`✅ API available at http://localhost:${PORT}/api`);
-  console.log(`✅ Health check: http://localhost:${PORT}/api/health`);
+// Запуск сервера на всех интерфейсах
+app.listen(PORT, HOST, () => {
+  console.log('🚀 Сервер успешно запущен!');
+  console.log(`📍 Локальный доступ: http://localhost:${PORT}`);
+  console.log(`📍 Внутренняя сеть: http://192.168.0.62:${PORT}`);
+  console.log(`🌐 Внешний доступ: http://176.125.135.115:${PORT}`);
+  console.log(`📊 API Health: http://176.125.135.115:${PORT}/api/health`);
 });
