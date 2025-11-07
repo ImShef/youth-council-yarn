@@ -11,7 +11,9 @@
     "eject": "react-scripts eject",
     "server": "node server.js",
     "dev": "concurrently \"yarn run server\" \"yarn start\"",
-    "deploy": "gh-pages -d build"
+    "deploy": "gh-pages -d build",
+    "build:fix": "node fix-build.js",
+    "build:full": "react-scripts build && node fix-build.js"
   },
   "dependencies": {
     "body-parser": "^1.20.2",
